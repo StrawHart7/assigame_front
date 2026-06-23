@@ -24,7 +24,7 @@ export default function Accueil() {
     <div style={{ fontFamily: 'Syne, sans-serif', background: '#f5f5f5', margin: 0 }}>
 
       {/* BARRE TOP */}
-      <div style={{ background: 'linear-gradient(90deg, #6c2bd9, #9b4dff)', color: '#fff', padding: '0.5rem 2rem', display: 'flex', justifyContent: 'space-around', fontSize: '0.78rem', flexWrap: 'wrap', gap: '0.5rem', textAlign: 'center' }}>
+      <div style={{ background: 'linear-gradient(90deg, #d97706, #F5A623)', color: '#fff', padding: '0.5rem 2rem', display: 'flex', justifyContent: 'space-around', fontSize: '0.78rem', flexWrap: 'wrap', gap: '0.5rem', textAlign: 'center' }}>
         {['🚚 Livraison rapide partout', '🔒 Paiement sécurisé', '🔄 Satisfait ou remboursé 30 jours', '💬 Support 7/7'].map((t, i) => (
           <span key={i}>{t}</span>
         ))}
@@ -45,15 +45,15 @@ export default function Accueil() {
         overflow: 'hidden'
       }}>
         <div style={{ maxWidth: '480px', zIndex: 1 }}>
-          <p style={{ color: '#a78bfa', fontSize: '0.8rem', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '1rem' }}>✦ Bienvenue chez Assigame</p>
+          <p style={{ color: '#F5A623', fontSize: '0.8rem', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '1rem' }}>✦ Bienvenue chez Assigame</p>
           <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: '900', lineHeight: 1.15, marginBottom: '1rem' }}>
-            Qualité, confiance<br />et <span style={{ color: '#a78bfa' }}>style.</span>
+            Qualité, confiance<br />et <span style={{ color: '#F5A623' }}>style.</span>
           </h1>
           <p style={{ color: '#94a3b8', fontSize: '1rem', lineHeight: 1.7, marginBottom: '2rem' }}>
             Découvrez des produits tendance, de qualité et sélectionnés rien que pour vous.
           </p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <a href="/catalogue" style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: '#fff', padding: '0.8rem 1.8rem', borderRadius: '8px', textDecoration: 'none', fontWeight: '700' }}>
+            <a href="/catalogue" style={{ background: 'linear-gradient(135deg, #d97706, #F5A623)', color: '#fff', padding: '0.8rem 1.8rem', borderRadius: '8px', textDecoration: 'none', fontWeight: '700' }}>
               Découvrir le catalogue →
             </a>
             <a href="/catalogue" style={{ background: 'transparent', border: '1px solid #475569', color: '#fff', padding: '0.8rem 1.8rem', borderRadius: '8px', textDecoration: 'none', fontWeight: '600' }}>
@@ -65,7 +65,7 @@ export default function Accueil() {
         {/* IMAGES HERO */}
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', zIndex: 1 }}>
           <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=300&q=80"
-            alt="mode" style={{ width: '200px', height: '280px', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 0 40px rgba(167,139,250,0.3)' }} />
+            alt="mode" style={{ width: '200px', height: '280px', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 0 40px rgba(245,166,35,0.3)' }} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&q=80"
               alt="shoes" style={{ width: '140px', height: '130px', objectFit: 'cover', borderRadius: '12px' }} />
@@ -97,7 +97,7 @@ export default function Accueil() {
       <section style={{ background: '#fff', padding: '3rem 5%', marginTop: '1rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1.3rem', fontWeight: '800' }}>Nos catégories populaires</h2>
-          <a href="/catalogue" style={{ color: '#7c3aed', fontSize: '0.85rem', textDecoration: 'none', fontWeight: '600' }}>Voir tout →</a>
+          <a href="/catalogue" style={{ color: '#F5A623', fontSize: '0.85rem', textDecoration: 'none', fontWeight: '600' }}>Voir tout →</a>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem' }}>
           {categories.map((cat, i) => (
@@ -113,17 +113,17 @@ export default function Accueil() {
       <section style={{ padding: '3rem 5%', background: '#f9fafb' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1.3rem', fontWeight: '800' }}>Produits populaires</h2>
-          <a href="/catalogue" style={{ color: '#7c3aed', fontSize: '0.85rem', textDecoration: 'none', fontWeight: '600' }}>Voir tous les produits →</a>
+          <a href="/catalogue" style={{ color: '#F5A623', fontSize: '0.85rem', textDecoration: 'none', fontWeight: '600' }}>Voir tous les produits →</a>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
           {produits.map((p, i) => (
             <div key={i} style={{ background: '#fff', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', position: 'relative' }}>
-              <span style={{ position: 'absolute', top: '0.8rem', left: '0.8rem', background: '#7c3aed', color: '#fff', fontSize: '0.7rem', fontWeight: '700', padding: '0.2rem 0.5rem', borderRadius: '4px', zIndex: 1 }}>{p.promo}</span>
+              <span style={{ position: 'absolute', top: '0.8rem', left: '0.8rem', background: '#F5A623', color: '#fff', fontSize: '0.7rem', fontWeight: '700', padding: '0.2rem 0.5rem', borderRadius: '4px', zIndex: 1 }}>{p.promo}</span>
               <img src={p.img} alt={p.nom} style={{ width: '100%', height: '160px', objectFit: 'cover' }} />
               <div style={{ padding: '0.8rem' }}>
                 <div style={{ fontSize: '0.85rem', fontWeight: '700', marginBottom: '0.3rem' }}>{p.nom}</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem' }}>
-                  <span style={{ color: '#7c3aed', fontWeight: '800' }}>{p.prix}</span>
+                  <span style={{ color: '#F5A623', fontWeight: '800' }}>{p.prix}</span>
                   <span style={{ color: '#9ca3af', fontSize: '0.75rem', textDecoration: 'line-through' }}>{p.ancien}</span>
                 </div>
                 <div style={{ color: '#f59e0b', fontSize: '0.8rem' }}>{'★'.repeat(p.avis)}{'☆'.repeat(5 - p.avis)}</div>
@@ -136,9 +136,9 @@ export default function Accueil() {
       {/* BANNIÈRES PROMO */}
       <section style={{ padding: '2rem 5%', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
         {[
-          { bg: 'linear-gradient(135deg, #3b0764, #7c3aed)', tag: '🏷️ Offres exclusives', titre: "Jusqu'à -30% sur une sélection !", sub: "Profitez-en avant qu'il n'y en ait plus.", btn: 'Voir les offres', btnColor: '#7c3aed' },
-          { bg: 'linear-gradient(135deg, #4c1d95, #a855f7)', tag: '✨ Nouveautés', titre: 'Découvrez les dernières arrivées !', sub: 'Des nouveautés chaque semaine.', btn: 'Voir les nouveautés', btnColor: '#7c3aed' },
-          { bg: 'linear-gradient(135deg, #1e3a8a, #3b82f6)', tag: '🚚 Livraison rapide', titre: 'Recevez vos commandes en un temps record.', sub: 'Livraison express disponible.', btn: 'En savoir plus', btnColor: '#1e3a8a' },
+          { bg: 'linear-gradient(135deg, #7c2d12, #d97706)', tag: '🏷️ Offres exclusives', titre: "Jusqu'à -30% sur une sélection !", sub: "Profitez-en avant qu'il n'y en ait plus.", btn: 'Voir les offres', btnColor: '#d97706' },
+          { bg: 'linear-gradient(135deg, #9a3412, #ea580c)', tag: '✨ Nouveautés', titre: 'Découvrez les dernières arrivées !', sub: 'Des nouveautés chaque semaine.', btn: 'Voir les nouveautés', btnColor: '#ea580c' },
+          { bg: 'linear-gradient(135deg, #7c2d12, #F5A623)', tag: '🚚 Livraison rapide', titre: 'Recevez vos commandes en un temps record.', sub: 'Livraison express disponible.', btn: 'En savoir plus', btnColor: '#d97706' },
         ].map((b, i) => (
           <div key={i} style={{ background: b.bg, borderRadius: '16px', padding: '2rem', color: '#fff' }}>
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '0.5rem' }}>{b.tag}</p>
@@ -158,7 +158,7 @@ export default function Accueil() {
           { val: '🌍', label: 'Livraison partout', sub: 'Rapide et fiable' },
         ].map((s, i) => (
           <div key={i}>
-            <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#a78bfa' }}>{s.val}</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#F5A623' }}>{s.val}</div>
             <div style={{ fontWeight: '700', fontSize: '0.85rem', marginTop: '0.3rem' }}>{s.label}</div>
             <div style={{ color: '#64748b', fontSize: '0.75rem' }}>{s.sub}</div>
           </div>
