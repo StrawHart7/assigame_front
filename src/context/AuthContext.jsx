@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState } from 'react'
 
 const AuthContext = createContext(null)
 
@@ -8,6 +8,8 @@ export function AuthProvider({ children }) {
     return stored ? JSON.parse(stored) : null
   })
 
+  const [cartCount, setCartCount] = useState(0)
+
   const login = (userData) => {
     setUser(userData)
     localStorage.setItem('assigame_user', JSON.stringify(userData))
@@ -15,11 +17,12 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     setUser(null)
+    setCartCount(0)
     localStorage.removeItem('assigame_user')
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, cartCount, setCartCount }}>
       {children}
     </AuthContext.Provider>
   )
