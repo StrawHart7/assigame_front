@@ -12,7 +12,7 @@ export default function Register() {
   const [nom, setNom] = useState('')
   const [prenom, setPrenom] = useState('')
   const [email, setEmail] = useState('')
-  const [login, setLogin] = useState('')
+  const [userPseudo, setUserPseudo] = useState('')
   const [motdepasse, setMotdepasse] = useState('')
   const [telephone, setTelephone] = useState('')
   const [isLoading, setIsLoading] = useState(false)
