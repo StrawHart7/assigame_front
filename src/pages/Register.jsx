@@ -1,17 +1,52 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 
+import { Link, useNavigate } from 'react-router-dom'
+
+import { toast } from "react-toastify";
+
+import axios from "axios";
 export default function Register() {
+  // Pour naviguer vers une autre page
+  const router = useNavigate()
+
   const [nom, setNom] = useState('')
   const [prenom, setPrenom] = useState('')
   const [email, setEmail] = useState('')
-  const [login, setLogin] = useState('')
+  const [userPseudo, setUserPseudo] = useState('')
   const [motdepasse, setMotdepasse] = useState('')
   const [telephone, setTelephone] = useState('')
-
-  const handleRegister = (e) => {
+  const [isLoading, setIsLoading] = useState(false)
+  const handleRegister = async (e) => {
     e.preventDefault()
-    // Action d'inscription à lier avec l'API plus tard
+    setIsLoading(true)
+    try {
+      const userData = {
+        Nom: nom,
+        Prenom: prenom,
+        Email: email,
+        Login: userPseudo,
+        Motdepasse: motdepasse,
+        telephone: telephone
+      };
+      const response = await axios.post("/api/auth/register", userData);
+      // pas besoin d'ecrire localhost:8081 car deja configurer un proxy dans vite.config.js
+      toast.success("Inscription reussie")
+      router('/login')
+      console.log(response);
+    } catch (error) {
+      const errMsg = error.response?.data?.erreur || error.message;
+      toast.error("Erreur lors de l'inscription : " + errMsg)
+      console.log(error);
+    }
+    finally {
+      setNom('')
+      setPrenom('')
+      setEmail('')
+      setUserPseudo('')
+      setMotdepasse('')
+      setTelephone('')
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -105,7 +140,7 @@ export default function Register() {
 
           {/* Login */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#374151' }}>Login</label>
+            <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#374151' }}>Nom d'utilisateur</label>
             <div style={{ position: 'relative' }}>
               <span style={iconWrapperStyle}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#9ca3af' }}>
@@ -116,8 +151,8 @@ export default function Register() {
               <input
                 type="text"
                 placeholder="Nom d'utilisateur"
-                value={login}
-                onChange={(e) => setLogin(e.target.value)}
+                value={userPseudo}
+                onChange={(e) => setUserPseudo(e.target.value)}
                 style={inputWithIconStyle}
               />
             </div>
