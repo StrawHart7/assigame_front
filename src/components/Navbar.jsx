@@ -1,8 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-export default function Navbar({ cartCount = 0 }) {
-  const { user, logout } = useAuth()
+export default function Navbar() {
+  const { user, logout, cartCount } = useAuth()
   const navigate = useNavigate()
 
   const handleLogout = () => {
