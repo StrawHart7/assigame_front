@@ -12,7 +12,7 @@ import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 
 export default function Panier() {
-  const { user } = useAuth()
+  const { user, setCartCount } = useAuth()
   const navigate = useNavigate()
   const [lignes, setLignes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -24,6 +24,8 @@ export default function Panier() {
       setLoading(true)
       const res = await api.get(`/panier/${user.id_utilisateur}/lignes`)
       setLignes(res.data)
+      const total = res.data.reduce((acc, l) => acc + l.quantite, 0)
+      setCartCount(total)
     } catch (e) {
       setError('Impossible de charger le panier.')
     } finally {
@@ -70,9 +72,10 @@ export default function Panier() {
     }
   }
 
-  const subtotal = lignes.reduce((acc, l) => acc + (l.prix_unitaire * l.quantite), 0)
+  const subtotal = lignes.reduce((acc, l) => acc + (Number(l.prix_unitaire) * l.quantite), 0)
   const tax = subtotal * 0.08
   const total = subtotal + tax
+  const formatPrix = (val) => Number(val).toLocaleString('fr-FR') + ' FCFA'
 
   if (loading) return <PageLoader />
 
@@ -137,17 +140,17 @@ export default function Panier() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
               <SummaryRow
                 label={`Sous-total (${lignes.reduce((a, l) => a + l.quantite, 0)} articles)`}
-                value={`${subtotal.toFixed(2)} FCFA`}
+                value={formatPrix(subtotal)}
               />
               <SummaryRow label="Livraison" value={<span style={{ color: '#16a34a', fontWeight: 600 }}>Gratuite</span>} />
-              <SummaryRow label="Taxes (8%)" value={`${tax.toFixed(2)} FCFA`} />
+              <SummaryRow label="Taxes (8%)" value={formatPrix(tax)} />
             </div>
 
             <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem', marginBottom: '1.5rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontWeight: 700, fontSize: '1.05rem' }}>Total</span>
                 <span style={{ fontWeight: 800, fontSize: '1.2rem', color: '#F5A623' }}>
-                  {total.toFixed(2)} FCFA
+                  {formatPrix(total)}
                 </span>
               </div>
             </div>
@@ -176,7 +179,13 @@ export default function Panier() {
 
 function LignePanier({ ligne, loading, onUpdateQte, onSupprimer }) {
   const produit = ligne.produit || {}
-  const sousTotal = (ligne.prix_unitaire * ligne.quantite).toFixed(2)
+  const [imgError, setImgError] = useState(false)
+
+  // prix_unitaire est le prix capturé au moment de l'ajout — source unique de vérité
+  const prixUnitaire = Number(ligne.prix_unitaire) || 0
+  const sousTotal = prixUnitaire * ligne.quantite
+
+  const formatPrix = (val) => val.toLocaleString('fr-FR') + ' FCFA'
 
   return (
     <div style={{ display: 'flex', gap: '1rem', padding: '1.25rem 0', opacity: loading ? 0.5 : 1 }}>
@@ -186,8 +195,13 @@ function LignePanier({ ligne, loading, onUpdateQte, onSupprimer }) {
         background: '#f3f4f6', flexShrink: 0, overflow: 'hidden',
         display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
-        {produit.image
-          ? <img src={produit.image} alt={produit.nom_produit} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        {produit.image && !imgError
+          ? <img
+              src={produit.image}
+              alt={produit.nom_produit}
+              onError={() => setImgError(true)}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
           : <span style={{ fontSize: '2rem' }}>📦</span>
         }
       </div>
@@ -200,7 +214,7 @@ function LignePanier({ ligne, loading, onUpdateQte, onSupprimer }) {
               {produit.nom_produit || 'Produit'}
             </p>
             <p style={{ color: '#6b7280', fontSize: '0.85rem', marginTop: '0.2rem' }}>
-              {ligne.prix_unitaire?.toFixed(2)} FCFA / unité
+              {formatPrix(prixUnitaire)} / unité
             </p>
           </div>
           <button onClick={onSupprimer} disabled={loading} style={deleteBtnStyle}>
@@ -208,9 +222,9 @@ function LignePanier({ ligne, loading, onUpdateQte, onSupprimer }) {
           </button>
         </div>
 
-        {/* Quantité + total */}
+        {/* Quantité + sous-total recalculé */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0', border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
             <button
               onClick={() => onUpdateQte(ligne.quantite - 1)}
               disabled={loading || ligne.quantite <= 1}
@@ -226,7 +240,7 @@ function LignePanier({ ligne, loading, onUpdateQte, onSupprimer }) {
             >+</button>
           </div>
           <span style={{ fontWeight: 700, fontSize: '1rem', color: '#1a1a1a' }}>
-            {sousTotal} FCFA
+            {formatPrix(sousTotal)}
           </span>
         </div>
       </div>

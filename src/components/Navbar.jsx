@@ -1,15 +1,15 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-
+ 
 export default function Navbar() {
   const { user, logout, cartCount } = useAuth()
   const navigate = useNavigate()
-
+ 
   const handleLogout = () => {
     logout()
     navigate('/login')
   }
-
+ 
   return (
     <nav style={{
       background: '#fff',
@@ -30,13 +30,13 @@ export default function Navbar() {
           ASSI<span style={{ color: '#F5A623' }}>GAME</span>
         </span>
       </Link>
-
+ 
       {/* Nav links */}
       <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
         <Link to="/" style={linkStyle}>Accueil</Link>
         <Link to="/catalogue" style={linkStyle}>Catalogue</Link>
       </div>
-
+ 
       {/* Right side */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
         {/* Cart icon */}
@@ -56,7 +56,7 @@ export default function Navbar() {
             </span>
           )}
         </Link>
-
+ 
         {user ? (
           <>
             <Link to="/commandes" style={linkStyle}>Mes commandes</Link>
@@ -72,7 +72,7 @@ export default function Navbar() {
     </nav>
   )
 }
-
+ 
 const linkStyle = {
   textDecoration: 'none',
   color: '#4b5563',
@@ -80,7 +80,7 @@ const linkStyle = {
   fontWeight: 500,
   transition: 'color 0.2s',
 }
-
+ 
 const btnStyle = {
   textDecoration: 'none',
   background: '#F5A623',
@@ -90,7 +90,7 @@ const btnStyle = {
   fontSize: '0.9rem',
   fontWeight: 600,
 }
-
+ 
 const btnOutlineStyle = {
   background: 'transparent',
   border: '1px solid #e5e7eb',
@@ -101,3 +101,4 @@ const btnOutlineStyle = {
   fontWeight: 500,
   cursor: 'pointer',
 }
+ 
