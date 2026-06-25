@@ -13,6 +13,7 @@ import Checkout from './pages/Checkout'
 import Confirmation from './pages/Confirmation'
 import Commandes from './pages/Commandes'
 import Dashboard from './pages/Dashboard'
+import AdminDashboard from './pages/admin/AdminDashboard'
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/adminDashboard" element={<AdminDashboard />} />
 
           {/* Pages protégées */}
           <Route path="/panier" element={
