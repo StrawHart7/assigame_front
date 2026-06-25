@@ -1,13 +1,41 @@
 import { useState } from 'react'
-
 import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
-import { toast } from "react-toastify";
+// ============================================================
+// PAGE REGISTER — VERSION MOCKÉE (sans backend)
+//
+// 🔧 FONCTIONNEMENT ACTUEL (mock) :
+//   1. On récupère la liste des comptes existants depuis localStorage (clé "assigame_users")
+//   2. On vérifie que l'Email n'est pas déjà utilisé (duplicate check local)
+//   3. On ajoute le nouveau compte dans le tableau et on le sauvegarde
+//   4. On redirige vers /login
+//
+// 📌 POUR LE BACKEND (quand l'API sera prête) :
+//   Remplacer le bloc "// --- MOCK ---" ci-dessous par :
+//
+//   const response = await axios.post('/api/auth/register', userData)
+//   toast.success('Inscription réussie !')
+//   navigate('/login')
+//
+//   Endpoint backend : POST /api/auth/register
+//   Body attendu     : {
+//                        "Nom": "...",
+//                        "Prenom": "...",
+//                        "Email": "...",
+//                        "Login": "...",       ← pseudo/username (max 10 chars)
+//                        "Motdepasse": "...",
+//                        "telephone": "..."    ← optionnel
+//                      }
+//   Réponse OK       : objet Utilisateur sauvegardé avec id_utilisateur (200)
+//   Réponse erreur   : { "erreur": "Un compte existe déjà avec cet email" } (400)
+//
+// ⚠️  ATTENTION BACKEND : le champ "Login" est limité à 10 caractères en base (varchar(10))
+//     → ajouter une validation côté backend et côté frontend si nécessaire
+// ============================================================
 
-import axios from "axios";
 export default function Register() {
-  // Pour naviguer vers une autre page
-  const router = useNavigate()
+  const navigate = useNavigate()
 
   const [nom, setNom] = useState('')
   const [prenom, setPrenom] = useState('')
@@ -16,29 +44,63 @@ export default function Register() {
   const [motdepasse, setMotdepasse] = useState('')
   const [telephone, setTelephone] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
   const handleRegister = async (e) => {
     e.preventDefault()
     setIsLoading(true)
+
+    // Validation : Login max 10 caractères (contrainte backend)
+    if (userPseudo.length > 10) {
+      toast.error("Le nom d'utilisateur ne doit pas dépasser 10 caractères.")
+      setIsLoading(false)
+      return
+    }
+
     try {
-      const userData = {
+      // --- MOCK : inscription locale via localStorage ---
+      // Simule ce que ferait POST /api/auth/register
+      await new Promise(r => setTimeout(r, 400)) // petit délai réaliste
+
+      const users = JSON.parse(localStorage.getItem('assigame_users') || '[]')
+
+      // Vérification email déjà utilisé (comme le backend)
+      const emailExiste = users.find(u => u.Email === email)
+      if (emailExiste) {
+        toast.error('Un compte existe déjà avec cet email.')
+        setIsLoading(false)
+        return
+      }
+
+      // Vérification Login déjà utilisé
+      const loginExiste = users.find(u => u.Login === userPseudo)
+      if (loginExiste) {
+        toast.error("Ce nom d'utilisateur est déjà pris.")
+        setIsLoading(false)
+        return
+      }
+
+      // Création du nouveau compte (structure identique à l'entité Utilisateur du backend)
+      const newUser = {
+        id_utilisateur: Date.now(), // ID simulé (le backend génère le vrai via IDENTITY)
         Nom: nom,
         Prenom: prenom,
         Email: email,
         Login: userPseudo,
-        Motdepasse: motdepasse,
-        telephone: telephone
-      };
-      const response = await axios.post("/api/auth/register", userData);
-      // pas besoin d'ecrire localhost:8081 car deja configurer un proxy dans vite.config.js
-      toast.success("Inscription reussie")
-      router('/login')
-      console.log(response);
+        Motdepasse: motdepasse,       // ⚠️ BACKEND : à hasher avec BCrypt avant de stocker en BDD
+        telephone: telephone || null,
+        statut: 'ACTIF'
+      }
+
+      // Sauvegarde dans localStorage
+      users.push(newUser)
+      localStorage.setItem('assigame_users', JSON.stringify(users))
+      // --- FIN MOCK ---
+
+      toast.success('Inscription réussie ! Connectez-vous.')
+      navigate('/login')
     } catch (error) {
-      const errMsg = error.response?.data?.erreur || error.message;
-      toast.error("Erreur lors de l'inscription : " + errMsg)
-      console.log(error);
-    }
-    finally {
+      toast.error("Erreur lors de l'inscription : " + error.message)
+    } finally {
       setNom('')
       setPrenom('')
       setEmail('')
@@ -103,6 +165,7 @@ export default function Register() {
                 placeholder="Ex: Jean"
                 value={prenom}
                 onChange={(e) => setPrenom(e.target.value)}
+                required
                 style={inputStyle}
               />
             </div>
@@ -113,6 +176,7 @@ export default function Register() {
                 placeholder="Ex: Dupont"
                 value={nom}
                 onChange={(e) => setNom(e.target.value)}
+                required
                 style={inputStyle}
               />
             </div>
@@ -133,14 +197,18 @@ export default function Register() {
                 placeholder="votre@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
                 style={inputWithIconStyle}
               />
             </div>
           </div>
 
-          {/* Login */}
+          {/* Login / pseudo — max 10 chars (contrainte backend) */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#374151' }}>Nom d'utilisateur</label>
+            <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#374151' }}>
+              Nom d'utilisateur{' '}
+              <span style={{ color: '#9ca3af', fontWeight: '400' }}>(max 10 caractères)</span>
+            </label>
             <div style={{ position: 'relative' }}>
               <span style={iconWrapperStyle}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#9ca3af' }}>
@@ -150,9 +218,11 @@ export default function Register() {
               </span>
               <input
                 type="text"
-                placeholder="Nom d'utilisateur"
+                placeholder="pseudo"
                 value={userPseudo}
                 onChange={(e) => setUserPseudo(e.target.value)}
+                maxLength={10}
+                required
                 style={inputWithIconStyle}
               />
             </div>
@@ -173,6 +243,7 @@ export default function Register() {
                 placeholder="••••••••"
                 value={motdepasse}
                 onChange={(e) => setMotdepasse(e.target.value)}
+                required
                 style={inputWithIconStyle}
               />
             </div>
@@ -191,7 +262,7 @@ export default function Register() {
               </span>
               <input
                 type="tel"
-                placeholder="+33 6 00 00 00 00"
+                placeholder="+228 90 00 00 00"
                 value={telephone}
                 onChange={(e) => setTelephone(e.target.value)}
                 style={inputWithIconStyle}
@@ -202,6 +273,7 @@ export default function Register() {
           {/* Submit Button */}
           <button
             type="submit"
+            disabled={isLoading}
             style={{
               background: '#F5A623',
               color: '#ffffff',
@@ -210,13 +282,14 @@ export default function Register() {
               borderRadius: '8px',
               fontWeight: '700',
               fontSize: '1rem',
-              cursor: 'pointer',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
               marginTop: '0.5rem',
               boxShadow: '0 4px 12px rgba(245, 166, 35, 0.2)',
-              transition: 'background 0.2s ease-in-out'
+              transition: 'background 0.2s ease-in-out',
+              opacity: isLoading ? 0.7 : 1
             }}
           >
-            S'inscrire
+            {isLoading ? 'Inscription...' : "S'inscrire"}
           </button>
         </form>
 

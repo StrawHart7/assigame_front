@@ -2,6 +2,33 @@ import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate, Link } from 'react-router-dom'
 
+// ============================================================
+// PAGE LOGIN — VERSION MOCKÉE (sans backend)
+//
+// 🔧 FONCTIONNEMENT ACTUEL (mock) :
+//   1. On lit la liste des comptes depuis localStorage (clé "assigame_users")
+//   2. On cherche un compte dont l'Email correspond à l'identifiant saisi
+//   3. On vérifie le mot de passe
+//   4. On stocke le user connecté via AuthContext → localStorage ("assigame_user")
+//
+// 📌 POUR LE BACKEND (quand l'API sera prête) :
+//   Remplacer le bloc "// --- MOCK ---" ci-dessous par :
+//
+//   const response = await axios.post('/api/auth/login', {
+//     email: identifiant,
+//     motdepasse: motdepasse
+//   })
+//   // Le backend retourne l'objet Utilisateur complet :
+//   // { id_utilisateur, Nom, Prenom, Email, Login, telephone, statut }
+//   performLogin(response.data)
+//   navigate('/')
+//
+//   Endpoint backend : POST /api/auth/login
+//   Body attendu     : { "email": "...", "motdepasse": "..." }
+//   Réponse OK       : objet Utilisateur (200)
+//   Réponse erreur   : { "erreur": "message" } (401)
+// ============================================================
+
 export default function Login() {
   const { login: performLogin } = useAuth()
   const navigate = useNavigate()
@@ -10,11 +37,50 @@ export default function Login() {
   const [motdepasse, setMotdepasse] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [erreur, setErreur] = useState(null)
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Dev login ou appel d'API réel futur
-    performLogin({ id_utilisateur: 1, Login: identifiant || 'test', Nom: 'Test', Prenom: 'User', Email: 'test@test.com' })
+    setErreur(null)
+    setLoading(true)
+
+    // --- MOCK : authentification locale via localStorage ---
+    // Simule ce que ferait le backend Spring Boot
+    await new Promise(r => setTimeout(r, 400)) // petit délai réaliste
+
+    const users = JSON.parse(localStorage.getItem('assigame_users') || '[]')
+
+    // On cherche par Email OU par Login (pseudo)
+    const found = users.find(
+      u => u.Email === identifiant || u.Login === identifiant
+    )
+
+    if (!found) {
+      setErreur('Aucun compte trouvé avec cet identifiant.')
+      setLoading(false)
+      return
+    }
+
+    if (found.Motdepasse !== motdepasse) {
+      setErreur('Mot de passe incorrect.')
+      setLoading(false)
+      return
+    }
+
+    // Connexion réussie → on stocke via AuthContext (→ localStorage "assigame_user")
+    performLogin({
+      id_utilisateur: found.id_utilisateur,
+      Login: found.Login,
+      Nom: found.Nom,
+      Prenom: found.Prenom,
+      Email: found.Email,
+      telephone: found.telephone || '',
+      statut: found.statut || 'ACTIF'
+    })
+    // --- FIN MOCK ---
+
+    setLoading(false)
     navigate('/')
   }
 
@@ -61,6 +127,21 @@ export default function Login() {
           Connectez-vous pour accéder à votre catalogue.
         </p>
 
+        {/* Erreur */}
+        {erreur && (
+          <div style={{
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: '8px',
+            padding: '0.75rem 1rem',
+            marginBottom: '1.25rem',
+            color: '#dc2626',
+            fontSize: '0.85rem'
+          }}>
+            {erreur}
+          </div>
+        )}
+
         {/* Form */}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           
@@ -78,6 +159,7 @@ export default function Login() {
               placeholder="votre@email.com"
               value={identifiant}
               onChange={(e) => setIdentifiant(e.target.value)}
+              required
               style={inputStyle}
             />
           </div>
@@ -92,9 +174,6 @@ export default function Login() {
                 </svg>
                 Mot de passe
               </label>
-              <Link to="/forgot-password" style={{ fontSize: '0.78rem', color: '#F5A623', textDecoration: 'none', fontWeight: '600' }}>
-                Mot de passe oublié ?
-              </Link>
             </div>
             <div style={{ position: 'relative' }}>
               <input
@@ -102,6 +181,7 @@ export default function Login() {
                 placeholder="••••••••"
                 value={motdepasse}
                 onChange={(e) => setMotdepasse(e.target.value)}
+                required
                 style={inputStyle}
               />
               <button
@@ -150,6 +230,7 @@ export default function Login() {
           {/* Submit Button */}
           <button
             type="submit"
+            disabled={loading}
             style={{
               background: '#F5A623',
               color: '#ffffff',
@@ -158,52 +239,16 @@ export default function Login() {
               borderRadius: '8px',
               fontWeight: '700',
               fontSize: '1rem',
-              cursor: 'pointer',
+              cursor: loading ? 'not-allowed' : 'pointer',
               marginTop: '0.5rem',
               boxShadow: '0 4px 12px rgba(245, 166, 35, 0.2)',
-              transition: 'background 0.2s ease-in-out'
+              transition: 'background 0.2s ease-in-out',
+              opacity: loading ? 0.7 : 1
             }}
           >
-            Connexion
+            {loading ? 'Connexion...' : 'Connexion'}
           </button>
         </form>
-
-        {/* Divider */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          textAlign: 'center',
-          margin: '1.5rem 0',
-          color: '#9ca3af',
-          fontSize: '0.78rem',
-          fontWeight: '600'
-        }}>
-          <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
-          <span style={{ padding: '0 0.75rem' }}>OU</span>
-          <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
-        </div>
-
-        {/* Social Logins */}
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          {/* Google */}
-          <button style={socialButtonStyle}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
-            </svg>
-            <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#374151' }}>Google</span>
-          </button>
-
-          {/* Facebook */}
-          <button style={socialButtonStyle}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-            </svg>
-            <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#374151' }}>Facebook</span>
-          </button>
-        </div>
 
         {/* Register Link */}
         <p style={{
@@ -237,17 +282,3 @@ const inputStyle = {
   boxSizing: 'border-box',
   transition: 'border-color 0.15s ease'
 }
-
-const socialButtonStyle = {
-  flex: 1,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '0.5rem',
-  background: '#ffffff',
-  border: '1px solid #e5e7eb',
-  borderRadius: '8px',
-  padding: '0.65rem',
-  cursor: 'pointer',
-  transition: 'background 0.2s ease'
-}
