@@ -195,7 +195,7 @@ export default function Login() {
 
     // Connecte directement
     performLogin(adminUser)
-    navigate('/adminDashboard')
+    navigate('/admin')
   }
 
   const handleSubmit = mode === 'admin' ? handleAdminLogin : handleUserLogin

@@ -44,7 +44,7 @@ export default function Navbar() {
         {user &&
           (
             <Link
-              to="/dashboard"
+              to="/admin"
               title="Ajouter / gérer les produits"
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -83,7 +83,6 @@ export default function Navbar() {
  
         {user ? (
           <>
-            <Link to="/commandes" style={linkStyle}>Mes commandes</Link>
             <button onClick={handleLogout} style={btnOutlineStyle}>Déconnexion</button>
           </>
         ) : (
