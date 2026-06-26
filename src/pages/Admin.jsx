@@ -328,7 +328,16 @@ export default function Admin() {
   const toggleUserStatut = async (utilisateur) => {
     const nouveauStatut = utilisateur.statut?.toLowerCase() === 'actif' ? 'inactif' : 'actif'
     try {
-      const payload = { ...utilisateur, statut: nouveauStatut }
+      // @JsonProperty oblige à envoyer les noms en majuscules
+      const payload = {
+        Nom:        utilisateur.Nom,
+        Prenom:     utilisateur.Prenom,
+        Email:      utilisateur.Email,
+        Login:      utilisateur.Login,
+        Motdepasse: utilisateur.Motdepasse,
+        telephone:  utilisateur.telephone,
+        statut:     nouveauStatut,
+      }
       await api.put(`/utilisateur/update/${utilisateur.id_utilisateur}`, payload)
       setUsers(prev => prev.map(u =>
         u.id_utilisateur === utilisateur.id_utilisateur ? { ...u, statut: nouveauStatut } : u
@@ -382,7 +391,8 @@ export default function Admin() {
   )
 
   const filteredUsers = users.filter(u => {
-    const txt = `${u.login || ''} ${u.email || ''} ${u.nom || ''} ${u.prenom || ''}`.toLowerCase()
+    // L'API retourne les champs avec @JsonProperty en majuscules : Login, Nom, Prenom, Email
+    const txt = `${u.Login || ''} ${u.Email || ''} ${u.Nom || ''} ${u.Prenom || ''}`.toLowerCase()
     const matchSearch = txt.includes(searchUser.toLowerCase())
     const matchStatut =
       filterStatut === 'TOUS' ||
@@ -564,20 +574,20 @@ export default function Admin() {
                     {/* Nom */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                       <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: `${C.orange}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 700, color: C.orange, flexShrink: 0 }}>
-                        {(u.prenom || u.login || '?')[0].toUpperCase()}
+                        {(u.Prenom || u.Login || '?')[0].toUpperCase()}
                       </div>
                       <div>
-                        <div style={{ fontWeight: 600, fontSize: '0.88rem' }}>{u.prenom} {u.nom}</div>
+                        <div style={{ fontWeight: 600, fontSize: '0.88rem' }}>{u.Prenom} {u.Nom}</div>
                         {u.telephone && <div style={{ color: C.muted, fontSize: '0.73rem' }}>{u.telephone}</div>}
                       </div>
                     </div>
 
                     {/* Email */}
-                    <span style={{ color: C.muted, fontSize: '0.82rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email}</span>
+                    <span style={{ color: C.muted, fontSize: '0.82rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.Email}</span>
 
                     {/* Login */}
                     <span style={{ display: 'inline-block', padding: '0.2rem 0.6rem', borderRadius: '20px', background: '#ffffff12', fontSize: '0.75rem', fontWeight: 600, color: C.muted }}>
-                      @{u.login}
+                      @{u.Login}
                     </span>
 
                     {/* Statut */}

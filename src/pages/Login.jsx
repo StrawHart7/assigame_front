@@ -8,7 +8,6 @@ const iconWrap = {
   transform: 'translateY(-50%)', display: 'flex',
   alignItems: 'center', pointerEvents: 'none',
 }
-
 const inputBase = {
   width: '100%', padding: '0.75rem 1rem',
   background: '#f9fafb', border: '1.5px solid #e5e7eb',
@@ -59,9 +58,6 @@ export default function Login() {
     setErreur(null)
     setLoading(true)
     try {
-      // Essaie d'abord par email (AuthService de Junior)
-      // Si l'identifiant ressemble à un email → /api/auth/login
-      // Sinon → /api/utilisateur/login (login par Login ou Email)
       let u
       if (identifiant.includes('@')) {
         const res = await api.post('/auth/login', { email: identifiant, motdepasse })
@@ -71,7 +67,7 @@ export default function Login() {
         u = res.data
       }
 
-      // Les champs retournés par l'API ont les majuscules de l'entité
+      // Stocker role dans le contexte — détermine l'accès admin
       performLogin({
         id_utilisateur: u.id_utilisateur,
         login:          u.Login,
@@ -80,9 +76,15 @@ export default function Login() {
         email:          u.Email,
         telephone:      u.telephone || '',
         statut:         u.statut,
+        role:           u.role || 'USER',   // ← clé pour l'accès admin
       })
 
-      navigate('/')
+      // Redirection selon le rôle
+      if (u.role === 'ADMIN') {
+        navigate('/admin')
+      } else {
+        navigate('/')
+      }
     } catch (err) {
       const msg = err.response?.data?.erreur || 'Identifiant ou mot de passe incorrect.'
       setErreur(msg)
@@ -157,14 +159,6 @@ export default function Login() {
             {loading ? 'Connexion...' : 'Se connecter'}
           </button>
         </form>
-
-        {/* Accès admin direct — pratique pendant le dev */}
-        <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-          <button onClick={() => navigate('/admin')}
-            style={{ background: 'none', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '0.5rem 1rem', color: '#6b7280', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'inherit' }}>
-            🛡 Accès Admin direct
-          </button>
-        </div>
 
         <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#4b5563', marginTop: '1.4rem', marginBottom: 0 }}>
           Nouveau sur Assigame ?{' '}
