@@ -1,15 +1,17 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
- 
+
 export default function Navbar() {
   const { user, logout, cartCount } = useAuth()
   const navigate = useNavigate()
- 
+
   const handleLogout = () => {
     logout()
     navigate('/login')
   }
- 
+
+  const isAdmin = user?.role === 'ADMIN'
+
   return (
     <nav style={{
       background: '#fff',
@@ -30,44 +32,42 @@ export default function Navbar() {
           ASSI<span style={{ color: '#F5A623' }}>GAME</span>
         </span>
       </Link>
- 
+
       {/* Nav links */}
       <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
         <Link to="/" style={linkStyle}>Accueil</Link>
         <Link to="/catalogue" style={linkStyle}>Catalogue</Link>
       </div>
- 
+
       {/* Right side */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
 
-        {/* Icône "+" → Ajouter un produit (ouvre le Dashboard) */}
-        {user &&
-          (
-            <Link
-              to="/admin"
-              title="Ajouter / gérer les produits"
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                width: '36px', height: '36px', borderRadius: '50%',
-                background: '#F5A623', color: '#fff', textDecoration: 'none',
-                boxShadow: '0 2px 8px rgba(245,166,35,0.35)',
-                transition: 'transform 0.15s, box-shadow 0.15s'
-              }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(245,166,35,0.5)' }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(245,166,35,0.35)' }}
-            >
-              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-            </Link>
-          )}
-
+        {/* Bouton Admin — visible UNIQUEMENT si role === 'ADMIN' */}
+        {isAdmin && (
+          <Link
+            to="/admin"
+            title="Tableau de bord Admin"
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '36px', height: '36px', borderRadius: '50%',
+              background: '#F5A623', color: '#fff', textDecoration: 'none',
+              boxShadow: '0 2px 8px rgba(245,166,35,0.35)',
+              transition: 'transform 0.15s, box-shadow 0.15s'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(245,166,35,0.5)' }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)';   e.currentTarget.style.boxShadow = '0 2px 8px rgba(245,166,35,0.35)' }}
+          >
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </Link>
+        )}
 
         {/* Icône panier */}
         <Link to="/panier" style={{ position: 'relative', textDecoration: 'none', color: '#1a1a1a' }}>
           <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
           </svg>
           {cartCount > 0 && (
             <span style={{
@@ -80,14 +80,12 @@ export default function Navbar() {
             </span>
           )}
         </Link>
- 
+
         {user ? (
-          <>
-            <button onClick={handleLogout} style={btnOutlineStyle}>Déconnexion</button>
-          </>
+          <button onClick={handleLogout} style={btnOutlineStyle}>Déconnexion</button>
         ) : (
           <>
-            <Link to="/login" style={linkStyle}>Connexion</Link>
+            <Link to="/login"    style={linkStyle}>Connexion</Link>
             <Link to="/register" style={btnStyle}>S'inscrire</Link>
           </>
         )}
@@ -95,33 +93,20 @@ export default function Navbar() {
     </nav>
   )
 }
- 
+
 const linkStyle = {
-  textDecoration: 'none',
-  color: '#4b5563',
-  fontSize: '0.95rem',
-  fontWeight: 500,
-  transition: 'color 0.2s',
+  textDecoration: 'none', color: '#4b5563',
+  fontSize: '0.95rem', fontWeight: 500,
 }
- 
+
 const btnStyle = {
-  textDecoration: 'none',
-  background: '#F5A623',
-  color: '#fff',
-  padding: '0.45rem 1.1rem',
-  borderRadius: '8px',
-  fontSize: '0.9rem',
-  fontWeight: 600,
+  textDecoration: 'none', background: '#F5A623',
+  color: '#fff', padding: '0.45rem 1.1rem',
+  borderRadius: '8px', fontSize: '0.9rem', fontWeight: 600,
 }
- 
+
 const btnOutlineStyle = {
-  background: 'transparent',
-  border: '1px solid #e5e7eb',
-  color: '#4b5563',
-  padding: '0.45rem 1.1rem',
-  borderRadius: '8px',
-  fontSize: '0.9rem',
-  fontWeight: 500,
-  cursor: 'pointer',
+  background: 'transparent', border: '1px solid #e5e7eb',
+  color: '#4b5563', padding: '0.45rem 1.1rem',
+  borderRadius: '8px', fontSize: '0.9rem', fontWeight: 500, cursor: 'pointer',
 }
- 

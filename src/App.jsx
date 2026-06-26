@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import Navbar from './components/Navbar'
+import AdminRoute from './components/AdminRoute'
 
 // Pages
 import Accueil from './pages/Accueil'
@@ -21,7 +22,9 @@ export default function App() {
           <Route path="/login"     element={<Login />} />
           <Route path="/register"  element={<Register />} />
           <Route path="/panier"    element={<Panier />} />
-          <Route path="/admin"     element={<Admin />} />
+          <Route path="/admin"     element={
+            <AdminRoute><Admin /></AdminRoute>
+          } />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
